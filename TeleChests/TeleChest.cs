@@ -14,20 +14,7 @@ namespace TeleChests
     [Serializable]
     public class TeleChest : Chest
     {
-        private GameLocation teleChestLocation;
-        private GameLocation TeleChestLocation
-        {
-            get
-            {
-                Console.WriteLine("Returning {0} for TeleChestLocation", teleChestLocation);
-                return teleChestLocation;
-            }
-            set
-            {
-                teleChestLocation = value;
-                Console.WriteLine("Setting TeleChestLocation to {0}", value);
-            }
-        }
+        private GameLocation location;
         public TeleChest() : base()
         {
             this.name = "TeleChest";
@@ -56,7 +43,6 @@ namespace TeleChests
 
         public override bool placementAction(GameLocation location, int x, int y, Farmer who = null)
         {
-            Console.WriteLine(location);
             this.health = 10;
             Vector2 vector = new Vector2((float)(x / Game1.tileSize), (float)(y / Game1.tileSize));
             if (location.objects.ContainsKey(vector) || Game1.currentLocation is MineShaft)
@@ -64,9 +50,9 @@ namespace TeleChests
                 Game1.showRedMessage("Unsuitable Location");
                 return false;
             }
-            location.objects.Add(vector, new TeleChest(true));
-            this.TeleChestLocation = location;
-            Console.WriteLine(this.TeleChestLocation);
+            this.tileLocation = vector;
+            location.objects.Add(this.tileLocation, this);
+            this.location = location;
             Game1.playSound("axe");
             return true;
         }
@@ -74,18 +60,15 @@ namespace TeleChests
         {
             try
             {
-                if (this.TeleChestLocation == null)
+                if (this.location == null)
                 {
                     return false;
                 }
                 this.clearNulls();
-                Vector2 vector2 = this.tileLocation;
-                //vector2.X = (float)Math.Floor(vector2.X / Game1.tileSize);
-                //vector2.Y = (float)Math.Floor(vector2.Y / Game1.tileSize);
                 Game1.playSound("hammer");
-                this.TeleChestLocation.debris.Add(new Debris(this, Game1.player.GetToolLocation(false), new Vector2((float)Game1.player.GetBoundingBox().Center.X, (float)Game1.player.GetBoundingBox().Center.Y)));
-                this.TeleChestLocation.objects[vector2].performRemoveAction(vector2, Game1.player.currentLocation);
-                this.TeleChestLocation.objects.Remove(vector2);
+                this.location.debris.Add(new Debris(this, this.tileLocation, new Vector2((float)Game1.player.GetBoundingBox().Center.X, (float)Game1.player.GetBoundingBox().Center.Y)));
+                this.location.objects[this.tileLocation].performRemoveAction(this.tileLocation, Game1.player.currentLocation);
+                this.location.objects.Remove(this.tileLocation);
                 return false;
             }
             catch (Exception ex)
