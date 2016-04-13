@@ -1,13 +1,9 @@
 ﻿using StardewValley.Objects;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using System.Collections.Generic;
 using StardewValley.Locations;
-using StardewValley.Tools;
 
 namespace TeleChests
 {
@@ -17,7 +13,7 @@ namespace TeleChests
         private GameLocation location;
         public TeleChest() : base()
         {
-            this.name = "TeleChest";
+            this.Name = "TeleChest";
         }
         public TeleChest(bool playerChest) : base(playerChest)
         {
@@ -25,17 +21,16 @@ namespace TeleChests
         }
         public TeleChest(Vector2 location) : base(location)
         {
-            this.name = "TeleChest";
+            this.Name = "TeleChest";
         }
         public TeleChest(string type, Vector2 location) : base(type, location)
         {
-            this.name = "TeleChest";
+            this.Name = "TeleChest";
         }
         public TeleChest(int coins, List<Item> items, Vector2 location, bool giftBox = false) : base(coins, items, location, giftBox)
         {
-            this.name = "TeleChest";
+            this.Name = "TeleChest";
         }
-
         public override string getDescription()
         {
             return "These chests seem to all be linked together!";
@@ -85,35 +80,35 @@ namespace TeleChests
         public new Item addItem(Item item)
         {
             Item i = base.addItem(item);
-            TeleChestsMod.GetMod().SharedInventory = items;
+            TeleChestsMod.SharedInventory = items;
             return i;
         }
         public new void grabItemFromChest(Item item, Farmer who)
         {
             base.grabItemFromChest(item, who);
-            TeleChestsMod.GetMod().SharedInventory = items;
+            TeleChestsMod.SharedInventory = items;
         }
         public new void grabItemFromInventory(Item item, Farmer who)
         {
             base.grabItemFromInventory(item, who);
-            TeleChestsMod.GetMod().SharedInventory = items;
+            TeleChestsMod.SharedInventory = items;
         }
         public new void clearNulls()
         {
             base.clearNulls();
-            TeleChestsMod.GetMod().SharedInventory = items;
+            TeleChestsMod.SharedInventory = items;
         }
         public override bool checkForAction(Farmer who, bool justCheckingForActivity = false)
         {
-            items = TeleChestsMod.GetMod().SharedInventory;
+            items = TeleChestsMod.SharedInventory;
             bool check = base.checkForAction(who, justCheckingForActivity);
-            TeleChestsMod.GetMod().SharedInventory = items;
+            TeleChestsMod.SharedInventory = items;
             return check;
         }
         public new void itemTakenCallback(Item item, Farmer who)
         {
             base.itemTakenCallback(item, who);
-            TeleChestsMod.GetMod().SharedInventory = items;
+            TeleChestsMod.SharedInventory = items;
         }
     }
 }
