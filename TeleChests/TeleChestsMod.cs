@@ -247,14 +247,6 @@ namespace TeleChests
             Rectangle CTCRect = new Rectangle(num + num5 % num4 * (Game1.tileSize + num3), num2 + num7 * (Game1.tileSize + 8), Game1.tileSize, Game1.tileSize * 2);
             Rectangle sourceRect = Game1.getSourceRectForStandardTileSheet(Game1.bigCraftableSpriteSheet, 130, 16, 32);
             pagesOfCraftingRecipes.Last().Add(new ClickableTextureComponent(CTCRect, "", "", Game1.bigCraftableSpriteSheet, sourceRect, Game1.pixelZoom), new TeleChestCraftingRecipe());
-            int i = 0;
-            foreach (KeyValuePair<ClickableTextureComponent, CraftingRecipe> kvp in pagesOfCraftingRecipes[0])
-            {
-                Item recipeItem = kvp.Value.createItem();
-                Console.WriteLine("{8}\n  CTC.bounds: {0},{1}:{2},{3}\n  CTC.name: {4}\n  CTC.item.Name: {5}\n  CR.GetType(): {6}\n  CR.createItem().GetType(): {7}",
-                    kvp.Key.bounds.X, kvp.Key.bounds.Y, kvp.Key.bounds.Width, kvp.Key.bounds.Height,
-                    kvp.Key.name, "null", kvp.Value.GetType(), (recipeItem == null ? "null" : recipeItem.parentSheetIndex.ToString()), i++);
-            }
         }
         public void onMenuClosed(object sender, EventArgsClickableMenuClosed e)
         {
@@ -264,6 +256,10 @@ namespace TeleChests
                 if (e.PriorMenu is SaveGameMenu)
                 {
                     handleCloseSaveGameMenu();
+                }
+                if (e.PriorMenu is GameMenu)
+                {
+                    handleCloseCraftingPage();
                 }
             }
             catch (Exception ex)
@@ -304,6 +300,21 @@ namespace TeleChests
             chestTeleChests = new SerializableDictionary<int, SerializableDictionary<Vector2, SerializableDictionary<int, TeleChest>>>();
             invTeleChests = new SerializableDictionary<int, TeleChest>();
             inWorldTeleChests = new SerializableDictionary<int, SerializableDictionary<Vector2, TeleChest>>();
+        }
+        public void handleCloseCraftingPage()
+        {
+            List<int> itemsToReplace = new List<int>();
+            foreach (Item item in Game1.player.items)
+            {
+                if (item != null && item.parentSheetIndex == 130 && !(item is Chest))
+                {
+                    itemsToReplace.Add(Game1.player.items.IndexOf(item));
+                }
+            }
+            foreach (int index in itemsToReplace)
+            {
+                Game1.player.items[index] = new TeleChest(true);
+            }
         }
         public void onFileLoad(object sender, EventArgsLoadedGameChanged e)
         {
