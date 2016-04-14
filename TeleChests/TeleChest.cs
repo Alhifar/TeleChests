@@ -130,12 +130,16 @@ namespace TeleChests
         }
         public override bool checkForAction(Farmer who, bool justCheckingForActivity = false)
         {
+            items = TeleChestsMod.SharedInventory[this.key];
+            if (justCheckingForActivity)
+            {
+                return true;
+            }
             if (Game1.oldKBState.IsKeyDown(Keys.LeftShift))
             {
                 performObjectDropInAction(Game1.player.ActiveObject, false, Game1.player);
                 return true;
             }
-            items = TeleChestsMod.SharedInventory[this.key];
             bool check = base.checkForAction(who, justCheckingForActivity);
             TeleChestsMod.SharedInventory[this.key] = items;
             return check;
@@ -162,6 +166,9 @@ namespace TeleChests
                 {
                     TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
                 }
+                this.currentLidFrame = 135;
+                this.frameCounter = 2;
+                Game1.playSound("dropItemInWater");
             }
             return false;
         }
