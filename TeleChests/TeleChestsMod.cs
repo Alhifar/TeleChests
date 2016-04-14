@@ -23,13 +23,13 @@ namespace TeleChests
         private static string teleChestInvChestsSavePath;
         private static string teleChestChestChestsSavePath;
 
-        public static List<Item> SharedInventory { set; get; }
+        public static SerializableDictionary<int, List<Item>> SharedInventory { set; get; }
         private static SerializableDictionary<int, SerializableDictionary<Vector2, TeleChest>> inWorldTeleChests = new SerializableDictionary<int, SerializableDictionary<Vector2, TeleChest>>();
         private static Stack<KeyValuePair<int, KeyValuePair<Vector2, TeleChest>>> chestStack = new Stack<KeyValuePair<int, KeyValuePair<Vector2, TeleChest>>>();
         private static SerializableDictionary<int, TeleChest> invTeleChests = new SerializableDictionary<int, TeleChest>();
         private static SerializableDictionary<int, SerializableDictionary<Vector2, SerializableDictionary<int, TeleChest>>> chestTeleChests = new SerializableDictionary<int, SerializableDictionary<Vector2, SerializableDictionary<int, TeleChest>>>();
 
-        private static XmlSerializer invSerializer = new XmlSerializer(typeof(List<Item>), new Type[] { typeof(Item), typeof(TeleChest) });
+        private static XmlSerializer invSerializer = new XmlSerializer(typeof(SerializableDictionary<StardewValley.Object, List<Item>>), new Type[] { typeof(Item), typeof(TeleChest), typeof(int), typeof(List<Item>) });
         private static XmlSerializer inWorldSerializer = new XmlSerializer(typeof(SerializableDictionary<int, SerializableDictionary<Vector2, TeleChest>>), new Type[] { typeof(int), typeof(Vector2), typeof(TeleChest) });
         private static XmlSerializer invChestsSerializer = new XmlSerializer(typeof(SerializableDictionary<int, TeleChest>), new Type[] { typeof(int), typeof(TeleChest) });
         private static XmlSerializer chestChestsSerializer = new XmlSerializer(typeof(SerializableDictionary<int, SerializableDictionary<Vector2, SerializableDictionary<int, TeleChest>>>), new Type[] { typeof(int), typeof(Vector2), typeof(TeleChest) });
@@ -37,7 +37,7 @@ namespace TeleChests
         public override void Entry(params object[] objects)
         {
             mod = this;
-            SharedInventory = new List<Item>();
+            SharedInventory = new SerializableDictionary<int, List<Item>>();
             Command.RegisterCommand("givetelechest", "Gives a TeleChest").CommandFired += giveTeleChest;
             PlayerEvents.LoadedGame += onFileLoad;
             MenuEvents.MenuChanged += onMenuChange;
@@ -74,7 +74,6 @@ namespace TeleChests
                     }
                     if (craftingPage == null)
                     {
-                        Console.WriteLine("CraftingPage is null");
                         return;
                     }
                     handleOpenCraftingPage(craftingPage);
@@ -234,19 +233,17 @@ namespace TeleChests
         public void handleOpenCraftingPage(CraftingPage craftingPage)
         {
             List<Dictionary<ClickableTextureComponent, CraftingRecipe>> pagesOfCraftingRecipes = ((List<Dictionary<ClickableTextureComponent, CraftingRecipe>>)typeof(CraftingPage).GetField("pagesOfCraftingRecipes", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(craftingPage));
-            Console.WriteLine("pagesOfCraftingRecipes.Count: {0}", pagesOfCraftingRecipes.Count);
             int num = craftingPage.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + IClickableMenu.borderWidth - Game1.tileSize / 4;
             int num2 = craftingPage.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth - Game1.tileSize / 4;
             int num3 = 8;
             int num4 = 10;
             int num5 = pagesOfCraftingRecipes.Last().Count;
-
             int num7 = num5 / num4 % (40 / num4);
-            //Dictionary<ClickableTextureComponent, CraftingRecipe> recipeDict = new Dictionary<ClickableTextureComponent, CraftingRecipe>();
 
             Rectangle CTCRect = new Rectangle(num + num5 % num4 * (Game1.tileSize + num3), num2 + num7 * (Game1.tileSize + 8), Game1.tileSize, Game1.tileSize * 2);
             Rectangle sourceRect = Game1.getSourceRectForStandardTileSheet(Game1.bigCraftableSpriteSheet, 130, 16, 32);
             pagesOfCraftingRecipes.Last().Add(new ClickableTextureComponent(CTCRect, "", "", Game1.bigCraftableSpriteSheet, sourceRect, Game1.pixelZoom), new TeleChestCraftingRecipe());
+            PlayerEvents.InventoryChanged += onInventoryChanged;
         }
         public void onMenuClosed(object sender, EventArgsClickableMenuClosed e)
         {
@@ -302,6 +299,10 @@ namespace TeleChests
             inWorldTeleChests = new SerializableDictionary<int, SerializableDictionary<Vector2, TeleChest>>();
         }
         public void handleCloseCraftingPage()
+        {
+            PlayerEvents.InventoryChanged -= onInventoryChanged;
+        }
+        public void onInventoryChanged(object sender, EventArgsInventoryChanged e)
         {
             List<int> itemsToReplace = new List<int>();
             foreach (Item item in Game1.player.items)
@@ -385,7 +386,7 @@ namespace TeleChests
                     {
                         using (XmlReader xmlReader = XmlReader.Create(teleChestInvSavePath))
                         {
-                            SharedInventory = (List<Item>)invSerializer.Deserialize(xmlReader);
+                            SharedInventory = (SerializableDictionary<int, List<Item>>)invSerializer.Deserialize(xmlReader);
                         }
                     }
                     chestTeleChests = new SerializableDictionary<int, SerializableDictionary<Vector2, SerializableDictionary<int, TeleChest>>>();

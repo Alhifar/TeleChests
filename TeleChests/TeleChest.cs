@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using StardewValley;
 using System.Collections.Generic;
 using StardewValley.Locations;
+using Microsoft.Xna.Framework.Input;
 
 namespace TeleChests
 {
@@ -11,25 +12,54 @@ namespace TeleChests
     public class TeleChest : Chest
     {
         private GameLocation location;
+        private int key;
+        private const int CHEST_INDEX = 130;
+
         public TeleChest() : base()
         {
             this.Name = "TeleChest";
+            this.key = CHEST_INDEX;
+            if (!TeleChestsMod.SharedInventory.ContainsKey(this.key))
+            {
+                TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
+            }
+
         }
         public TeleChest(bool playerChest) : base(playerChest)
         {
             this.Name = "TeleChest";
+            this.key = CHEST_INDEX;
+            if (!TeleChestsMod.SharedInventory.ContainsKey(this.key))
+            {
+                TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
+            }
         }
         public TeleChest(Vector2 location) : base(location)
         {
             this.Name = "TeleChest";
+            this.key = CHEST_INDEX;
+            if (!TeleChestsMod.SharedInventory.ContainsKey(this.key))
+            {
+                TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
+            }
         }
         public TeleChest(string type, Vector2 location) : base(type, location)
         {
             this.Name = "TeleChest";
+            this.key = CHEST_INDEX;
+            if (!TeleChestsMod.SharedInventory.ContainsKey(this.key))
+            {
+                TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
+            }
         }
         public TeleChest(int coins, List<Item> items, Vector2 location, bool giftBox = false) : base(coins, items, location, giftBox)
         {
             this.Name = "TeleChest";
+            this.key = CHEST_INDEX;
+            if (!TeleChestsMod.SharedInventory.ContainsKey(this.key))
+            {
+                TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
+            }
         }
         public override string getDescription()
         {
@@ -61,7 +91,7 @@ namespace TeleChests
                 }
                 this.clearNulls();
                 Game1.playSound("hammer");
-                this.location.debris.Add(new Debris(this, this.tileLocation, new Vector2((float)Game1.player.GetBoundingBox().Center.X, (float)Game1.player.GetBoundingBox().Center.Y)));
+                this.location.debris.Add(new Debris(this, this.tileLocation * new Vector2(Game1.tileSize, Game1.tileSize), new Vector2((float)Game1.player.GetBoundingBox().Center.X, (float)Game1.player.GetBoundingBox().Center.Y)));
                 this.location.objects[this.tileLocation].performRemoveAction(this.tileLocation, Game1.player.currentLocation);
                 this.location.objects.Remove(this.tileLocation);
                 return false;
@@ -80,35 +110,60 @@ namespace TeleChests
         public new Item addItem(Item item)
         {
             Item i = base.addItem(item);
-            TeleChestsMod.SharedInventory = items;
+            TeleChestsMod.SharedInventory[this.key] = items;
             return i;
         }
         public new void grabItemFromChest(Item item, Farmer who)
         {
             base.grabItemFromChest(item, who);
-            TeleChestsMod.SharedInventory = items;
+            TeleChestsMod.SharedInventory[this.key] = items;
         }
         public new void grabItemFromInventory(Item item, Farmer who)
         {
             base.grabItemFromInventory(item, who);
-            TeleChestsMod.SharedInventory = items;
+            TeleChestsMod.SharedInventory[this.key] = items;
         }
         public new void clearNulls()
         {
             base.clearNulls();
-            TeleChestsMod.SharedInventory = items;
+            TeleChestsMod.SharedInventory[this.key] = items;
         }
         public override bool checkForAction(Farmer who, bool justCheckingForActivity = false)
         {
-            items = TeleChestsMod.SharedInventory;
+            if (Game1.oldKBState.IsKeyDown(Keys.LeftShift))
+            {
+                performObjectDropInAction(Game1.player.ActiveObject, false, Game1.player);
+                return true;
+            }
+            items = TeleChestsMod.SharedInventory[this.key];
             bool check = base.checkForAction(who, justCheckingForActivity);
-            TeleChestsMod.SharedInventory = items;
+            TeleChestsMod.SharedInventory[this.key] = items;
             return check;
         }
         public new void itemTakenCallback(Item item, Farmer who)
         {
             base.itemTakenCallback(item, who);
-            TeleChestsMod.SharedInventory = items;
+            TeleChestsMod.SharedInventory[this.key] = items;
+        }
+        public override bool performObjectDropInAction(StardewValley.Object dropIn, bool probe, Farmer who)
+        {
+            if (!probe && dropIn != null)
+            {
+                this.key = dropIn.parentSheetIndex;
+                if (this.key == CHEST_INDEX)
+                {
+                    this.name = "Telechest";
+                }
+                else
+                {
+                    this.name = $"TeleChest - {dropIn.name}";
+                }
+                if (!TeleChestsMod.SharedInventory.ContainsKey(this.key))
+                {
+                    TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
+                }
+            }
+            return false;
         }
     }
 }

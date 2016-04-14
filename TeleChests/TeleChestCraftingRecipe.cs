@@ -30,19 +30,5 @@ namespace TeleChests
             this.timesCrafted = (Game1.player.craftingRecipes.ContainsKey(name) ? Game1.player.craftingRecipes[name] : 0);
 
         }
-
-        public Item overrideCreateItem()
-        {
-            if (this is TeleChestCraftingRecipe)
-            {
-                Console.WriteLine("Calling TeleChestCraftingRecipe.createItem()");
-                return new TeleChest(true);
-            }
-            else
-            {
-                return createItem();
-            }
-        }
-
     }
 }
