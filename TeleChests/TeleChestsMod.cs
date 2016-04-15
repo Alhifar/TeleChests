@@ -238,6 +238,10 @@ namespace TeleChests
             int num3 = 8;
             int num4 = 10;
             int num5 = pagesOfCraftingRecipes.Last().Count;
+            if (num5 % 40 == 0)
+            {
+                num5++;
+            }
             int num7 = num5 / num4 % (40 / num4);
 
             Rectangle CTCRect = new Rectangle(num + num5 % num4 * (Game1.tileSize + num3), num2 + num7 * (Game1.tileSize + 8), Game1.tileSize, Game1.tileSize * 2);
@@ -323,10 +327,10 @@ namespace TeleChests
             {
                 if (e.LoadedGame)
                 {
-                    teleChestLocationChestsSavePath = Path.Combine(this.PathOnDisk, String.Format("teleChestLocationSave_{0}_{1}.xml", Game1.player.Name, Game1.uniqueIDForThisGame));
-                    teleChestInvSavePath = Path.Combine(this.PathOnDisk, String.Format("teleChestInvSave_{0}_{1}.xml", Game1.player.Name, Game1.uniqueIDForThisGame));
-                    teleChestInvChestsSavePath = Path.Combine(this.PathOnDisk, String.Format("teleChestInvChestsSave_{0}_{1}.xml", Game1.player.Name, Game1.uniqueIDForThisGame));
-                    teleChestChestChestsSavePath = Path.Combine(this.PathOnDisk, String.Format("teleChestChestChestsSave_{0}_{1}.xml", Game1.player.Name, Game1.uniqueIDForThisGame));
+                    teleChestLocationChestsSavePath = Path.Combine(this.PathOnDisk, $"teleChestLocationSave_{Game1.player.Name}_{Game1.uniqueIDForThisGame}.xml");
+                    teleChestInvSavePath = Path.Combine(this.PathOnDisk, $"teleChestInvSave_{Game1.player.Name}_{Game1.uniqueIDForThisGame}.xml");
+                    teleChestInvChestsSavePath = Path.Combine(this.PathOnDisk, $"teleChestInvChestsSave_{Game1.player.Name}_{Game1.uniqueIDForThisGame}.xml");
+                    teleChestChestChestsSavePath = Path.Combine(this.PathOnDisk, $"teleChestChestChestsSave_{Game1.player.Name}_{Game1.uniqueIDForThisGame}.xml");
 
                     // Load in-world TeleChests
                     if (File.Exists(teleChestLocationChestsSavePath))

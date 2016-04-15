@@ -17,10 +17,13 @@ namespace TeleChests
             this.name = "TeleChest";
             this.isCookingRecipe = false;
             recipeList.Clear();
+#if DEBUG
             recipeList.Add(WOOD, 1);
-            //recipeList.Add(WOOD, 100);
-            //recipeList.Add(GOLD_BAR, 5);
-            //recipeList.Add(VOID_ESSENCE, 1);
+#else
+            recipeList.Add(WOOD, 100);
+            recipeList.Add(GOLD_BAR, 2);
+            recipeList.Add(VOID_ESSENCE, 1);
+#endif
             List<int> itemToProduce = (List<int>)typeof(CraftingRecipe).GetField("itemToProduce", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(this);
             itemToProduce.Clear();
             itemToProduce.Add(130);

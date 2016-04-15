@@ -1,0 +1,14 @@
+{
+  "Name": "TeleChests",
+  "Authour": "Alhifar",
+  "Version": {
+    "MajorVersion": 1,
+    "MinorVersion": 0,
+    "PatchVersion": 0,
+    "Build": ""
+  },
+  "Description": "Adds TeleChests with linked inventories",
+  "UniqueID": "4d49deb6-e56b-4f3f-837c-cdcfd2f56d1c",
+  "PerSaveConfigs": false,
+  "EntryDll": "TeleChests.dll"
+}

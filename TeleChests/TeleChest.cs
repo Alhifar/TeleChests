@@ -17,42 +17,27 @@ namespace TeleChests
 
         public TeleChest() : base()
         {
-            this.Name = "TeleChest";
-            this.key = CHEST_INDEX;
-            if (!TeleChestsMod.SharedInventory.ContainsKey(this.key))
-            {
-                TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
-            }
+            setInitialValues();
 
         }
         public TeleChest(bool playerChest) : base(playerChest)
         {
-            this.Name = "TeleChest";
-            this.key = CHEST_INDEX;
-            if (!TeleChestsMod.SharedInventory.ContainsKey(this.key))
-            {
-                TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
-            }
+            setInitialValues();
         }
         public TeleChest(Vector2 location) : base(location)
         {
-            this.Name = "TeleChest";
-            this.key = CHEST_INDEX;
-            if (!TeleChestsMod.SharedInventory.ContainsKey(this.key))
-            {
-                TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
-            }
+            setInitialValues();
         }
         public TeleChest(string type, Vector2 location) : base(type, location)
         {
-            this.Name = "TeleChest";
-            this.key = CHEST_INDEX;
-            if (!TeleChestsMod.SharedInventory.ContainsKey(this.key))
-            {
-                TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
-            }
+            setInitialValues();
         }
         public TeleChest(int coins, List<Item> items, Vector2 location, bool giftBox = false) : base(coins, items, location, giftBox)
+        {
+            setInitialValues();
+        }
+
+        private void setInitialValues()
         {
             this.Name = "TeleChest";
             this.key = CHEST_INDEX;
@@ -130,7 +115,6 @@ namespace TeleChests
         }
         public override bool checkForAction(Farmer who, bool justCheckingForActivity = false)
         {
-            items = TeleChestsMod.SharedInventory[this.key];
             if (justCheckingForActivity)
             {
                 return true;
@@ -138,8 +122,10 @@ namespace TeleChests
             if (Game1.oldKBState.IsKeyDown(Keys.LeftShift))
             {
                 performObjectDropInAction(Game1.player.ActiveObject, false, Game1.player);
+                items = TeleChestsMod.SharedInventory[this.key];
                 return true;
             }
+            items = TeleChestsMod.SharedInventory[this.key];
             bool check = base.checkForAction(who, justCheckingForActivity);
             TeleChestsMod.SharedInventory[this.key] = items;
             return check;
