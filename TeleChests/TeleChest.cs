@@ -154,7 +154,7 @@ namespace TeleChests
                 }
                 this.currentLidFrame = 135;
                 this.frameCounter = 2;
-                Game1.playSound("dropItemInWater");
+                Game1.playSound("throwDownITem");
             }
             return false;
         }
