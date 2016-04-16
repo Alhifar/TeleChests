@@ -8,7 +8,7 @@ namespace TeleChests
     class TeleChestCraftingRecipe : CraftingRecipe
     {
         private const int WOOD = 388;
-        private const int GOLD_BAR = 336;
+        private const int IRIDIUM_BAR = 337;
         private const int VOID_ESSENCE = 769;
 
         public TeleChestCraftingRecipe() : base("TeleChest", false)
@@ -21,7 +21,7 @@ namespace TeleChests
             recipeList.Add(WOOD, 1);
 #else
             recipeList.Add(WOOD, 100);
-            recipeList.Add(GOLD_BAR, 2);
+            recipeList.Add(IRIDIUM_BAR, 1);
             recipeList.Add(VOID_ESSENCE, 1);
 #endif
             List<int> itemToProduce = (List<int>)typeof(CraftingRecipe).GetField("itemToProduce", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(this);
