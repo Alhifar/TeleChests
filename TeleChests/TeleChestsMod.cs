@@ -29,7 +29,7 @@ namespace TeleChests
         private static SerializableDictionary<int, TeleChest> invTeleChests = new SerializableDictionary<int, TeleChest>();
         private static SerializableDictionary<int, SerializableDictionary<Vector2, SerializableDictionary<int, TeleChest>>> chestTeleChests = new SerializableDictionary<int, SerializableDictionary<Vector2, SerializableDictionary<int, TeleChest>>>();
 
-        private static XmlSerializer invSerializer = new XmlSerializer(typeof(SerializableDictionary<StardewValley.Object, List<Item>>), new Type[] { typeof(Item), typeof(TeleChest), typeof(int), typeof(List<Item>) });
+        private static XmlSerializer invSerializer = new XmlSerializer(typeof(SerializableDictionary<int, List<Item>>), new Type[] { typeof(Item), typeof(TeleChest), typeof(int), typeof(List<Item>) });
         private static XmlSerializer inWorldSerializer = new XmlSerializer(typeof(SerializableDictionary<int, SerializableDictionary<Vector2, TeleChest>>), new Type[] { typeof(int), typeof(Vector2), typeof(TeleChest) });
         private static XmlSerializer invChestsSerializer = new XmlSerializer(typeof(SerializableDictionary<int, TeleChest>), new Type[] { typeof(int), typeof(TeleChest) });
         private static XmlSerializer chestChestsSerializer = new XmlSerializer(typeof(SerializableDictionary<int, SerializableDictionary<Vector2, SerializableDictionary<int, TeleChest>>>), new Type[] { typeof(int), typeof(Vector2), typeof(TeleChest) });
