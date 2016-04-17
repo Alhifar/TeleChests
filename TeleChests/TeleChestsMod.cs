@@ -325,7 +325,7 @@ namespace TeleChests
             List<int> itemsToReplace = new List<int>();
             foreach (Item item in Game1.player.items)
             {
-                if (item != null && item.parentSheetIndex == 130 && !(item is Chest))
+                if (item != null && item is StardewValley.Object && (item as StardewValley.Object).bigCraftable && item.parentSheetIndex == 130 && !(item is Chest))
                 {
                     itemsToReplace.Add(Game1.player.items.IndexOf(item));
                 }
