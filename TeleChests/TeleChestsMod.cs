@@ -11,12 +11,29 @@ using System.IO;
 using StardewValley.Objects;
 using System.Reflection;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace TeleChests
 {
     public class TeleChestsMod : Mod
     {
         private static TeleChestsMod mod;
+        private static TeleChestConfig config;
+
+        public static TeleChestsMod Mod
+        {
+            get
+            {
+                return mod;
+            }
+        }
+        public static TeleChestConfig Config
+        {
+            get
+            {
+                return config;
+            }
+        }
 
         private static string teleChestLocationChestsSavePath;
         private static string teleChestInvSavePath;
@@ -37,16 +54,13 @@ namespace TeleChests
         public override void Entry(params object[] objects)
         {
             mod = this;
+            config = ConfigExtensions.InitializeConfig<TeleChestConfig>(new TeleChestConfig(), this.BaseConfigPath);
             SharedInventory = new SerializableDictionary<int, List<Item>>();
             Command.RegisterCommand("givetelechest", "Gives a TeleChest").CommandFired += giveTeleChest;
             PlayerEvents.LoadedGame += onFileLoad;
             MenuEvents.MenuChanged += onMenuChange;
             MenuEvents.MenuClosed += onMenuClosed;
             GameEvents.UpdateTick += onUpdateTick;
-        }
-        public static TeleChestsMod GetMod()
-        {
-            return mod;
         }
         public void giveTeleChest(object sender, EventArgsCommand e)
         {

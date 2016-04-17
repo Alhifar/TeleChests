@@ -113,16 +113,15 @@ namespace TeleChests
             base.clearNulls();
             TeleChestsMod.SharedInventory[this.key] = items;
         }
+        public new void itemTakenCallback(Item item, Farmer who)
+        {
+            base.itemTakenCallback(item, who);
+            TeleChestsMod.SharedInventory[this.key] = items;
+        }
         public override bool checkForAction(Farmer who, bool justCheckingForActivity = false)
         {
             if (justCheckingForActivity)
             {
-                return true;
-            }
-            if (Game1.oldKBState.IsKeyDown(Keys.LeftShift))
-            {
-                performObjectDropInAction(Game1.player.ActiveObject, false, Game1.player);
-                items = TeleChestsMod.SharedInventory[this.key];
                 return true;
             }
             items = TeleChestsMod.SharedInventory[this.key];
@@ -130,14 +129,9 @@ namespace TeleChests
             TeleChestsMod.SharedInventory[this.key] = items;
             return check;
         }
-        public new void itemTakenCallback(Item item, Farmer who)
-        {
-            base.itemTakenCallback(item, who);
-            TeleChestsMod.SharedInventory[this.key] = items;
-        }
         public override bool performObjectDropInAction(StardewValley.Object dropIn, bool probe, Farmer who)
         {
-            if (!probe && dropIn != null)
+            if (TeleChestsMod.Config.allowMultipleInventories && !probe && dropIn != null && Game1.oldKBState.IsKeyDown(Keys.LeftShift))
             {
                 this.key = dropIn.parentSheetIndex;
                 if (this.key == CHEST_INDEX)
@@ -155,6 +149,7 @@ namespace TeleChests
                 this.currentLidFrame = 135;
                 this.frameCounter = 2;
                 Game1.playSound("throwDownITem");
+                items = TeleChestsMod.SharedInventory[this.key];
             }
             return false;
         }

@@ -68,6 +68,9 @@
       <HintPath>..\..\..\..\Downloads\StardewValley.v1.05\Microsoft.Xna.Framework.Xact.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\SMAPI\StardewModdingAPI\bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Stardew Valley">
       <HintPath>..\..\..\..\Downloads\Stardew Valley 1.07\Stardew Valley.exe</HintPath>
       <Private>False</Private>
@@ -91,12 +94,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TeleChestConfig.cs" />
     <Compile Include="TeleChestCraftingRecipe.cs" />
     <Compile Include="TeleChest.cs" />
     <Compile Include="TeleChestsMod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="customRecipe.json" />
     <None Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
