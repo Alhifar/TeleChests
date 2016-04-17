@@ -70,6 +70,7 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\SMAPI\StardewModdingAPI\bin\Debug\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Stardew Valley">
       <HintPath>..\..\..\..\Downloads\Stardew Valley 1.07\Stardew Valley.exe</HintPath>
@@ -101,7 +102,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="customRecipe.json" />
+    <None Include="customRecipe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
