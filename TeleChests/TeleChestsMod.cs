@@ -11,7 +11,6 @@ using System.IO;
 using StardewValley.Objects;
 using System.Reflection;
 using System.Linq;
-using Newtonsoft.Json;
 
 namespace TeleChests
 {
