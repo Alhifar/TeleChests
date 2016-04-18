@@ -11,6 +11,7 @@ using System.IO;
 using StardewValley.Objects;
 using System.Reflection;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace TeleChests
 {
@@ -18,6 +19,7 @@ namespace TeleChests
     {
         private static TeleChestsMod mod;
         private static TeleChestConfig config;
+        private static Dictionary<int, int> recipe = new Dictionary<int, int>();
 
         public static TeleChestsMod Mod
         {
@@ -33,6 +35,17 @@ namespace TeleChests
                 return config;
             }
         }
+        public static Dictionary<int, int> Recipe
+        {
+            get
+            {
+                return recipe;
+            }
+        }
+
+        private const int WOOD = 388;
+        private const int IRIDIUM_BAR = 337;
+        private const int VOID_ESSENCE = 769;
 
         private static string teleChestLocationChestsSavePath;
         private static string teleChestInvSavePath;
@@ -55,6 +68,36 @@ namespace TeleChests
             mod = this;
             config = ConfigExtensions.InitializeConfig<TeleChestConfig>(new TeleChestConfig(), this.BaseConfigPath);
             SharedInventory = new SerializableDictionary<int, List<Item>>();
+            if (config.useDefaultRecipe)
+            {
+#if DEBUG
+                recipe.Add(WOOD, 1);
+#else
+                recipeList.Add(WOOD, 100);
+                recipeList.Add(IRIDIUM_BAR, 1);
+                recipeList.Add(VOID_ESSENCE, 1);
+#endif
+            }
+            else
+            {
+                try
+                {
+                    Dictionary<int, int> recipe = JsonConvert.DeserializeObject<Dictionary<int, int>>(File.ReadAllText(Path.Combine(TeleChestsMod.Mod.PathOnDisk, "customRecipe.json")));
+                    foreach (KeyValuePair<int, int> item in recipe)
+                    {
+                        recipe.Add(item.Key, item.Value);
+                    }
+                }
+                catch
+                {
+                    Log.Error("TeleChests: Error loading custom recipe, using default recipe instead");
+                    recipe.Clear();
+                    recipe.Add(WOOD, 100);
+                    recipe.Add(IRIDIUM_BAR, 1);
+                    recipe.Add(VOID_ESSENCE, 1);
+                }
+
+            }
             Command.RegisterCommand("givetelechest", "Gives a TeleChest").CommandFired += giveTeleChest;
             PlayerEvents.LoadedGame += onFileLoad;
             MenuEvents.MenuChanged += onMenuChange;
