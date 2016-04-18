@@ -73,9 +73,9 @@ namespace TeleChests
 #if DEBUG
                 recipe.Add(WOOD, 1);
 #else
-                recipeList.Add(WOOD, 100);
-                recipeList.Add(IRIDIUM_BAR, 1);
-                recipeList.Add(VOID_ESSENCE, 1);
+                recipe.Add(WOOD, 100);
+                recipe.Add(IRIDIUM_BAR, 1);
+                recipe.Add(VOID_ESSENCE, 1);
 #endif
             }
             else
