@@ -8,17 +8,15 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TeleChests
 {
-    [Serializable]
     public class TeleChest : Chest
     {
-        private GameLocation location;
-        private int key;
-        private const int CHEST_INDEX = 130;
+        public GameLocation location;
+        public int key;
+        private const int CHEST_INDEX = 1130;
 
         public TeleChest() : base()
         {
             setInitialValues();
-
         }
         public TeleChest(bool playerChest) : base(playerChest)
         {
@@ -87,9 +85,40 @@ namespace TeleChests
                 return false;
             }
         }
-        public override int salePrice()
+        public override bool checkForAction(Farmer who, bool justCheckingForActivity = false)
         {
-            return 1000;
+            if (justCheckingForActivity)
+            {
+                return true;
+            }
+            items = TeleChestsMod.SharedInventory[this.key];
+            bool check = base.checkForAction(who, justCheckingForActivity);
+            TeleChestsMod.SharedInventory[this.key] = items;
+            return check;
+        }
+        public override bool performObjectDropInAction(StardewValley.Object dropIn, bool probe, Farmer who)
+        {
+            if (TeleChestsMod.Config.allowMultipleInventories && !probe && dropIn != null && Game1.oldKBState.IsKeyDown(Keys.LeftShift))
+            {
+                this.key = dropIn.parentSheetIndex + (this.bigCraftable ? 1000 : 0);
+                if (this.key == CHEST_INDEX)
+                {
+                    this.name = "Telechest";
+                }
+                else
+                {
+                    this.name = $"TeleChest - {dropIn.name}";
+                }
+                if (!TeleChestsMod.SharedInventory.ContainsKey(this.key))
+                {
+                    TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
+                }
+                this.currentLidFrame = 135;
+                this.frameCounter = 2;
+                Game1.playSound("throwDownITem");
+                items = TeleChestsMod.SharedInventory[this.key];
+            }
+            return false;
         }
 
         public new Item addItem(Item item)
@@ -117,41 +146,6 @@ namespace TeleChests
         {
             base.itemTakenCallback(item, who);
             TeleChestsMod.SharedInventory[this.key] = items;
-        }
-        public override bool checkForAction(Farmer who, bool justCheckingForActivity = false)
-        {
-            if (justCheckingForActivity)
-            {
-                return true;
-            }
-            items = TeleChestsMod.SharedInventory[this.key];
-            bool check = base.checkForAction(who, justCheckingForActivity);
-            TeleChestsMod.SharedInventory[this.key] = items;
-            return check;
-        }
-        public override bool performObjectDropInAction(StardewValley.Object dropIn, bool probe, Farmer who)
-        {
-            if (TeleChestsMod.Config.allowMultipleInventories && !probe && dropIn != null && Game1.oldKBState.IsKeyDown(Keys.LeftShift))
-            {
-                this.key = dropIn.parentSheetIndex;
-                if (this.key == CHEST_INDEX)
-                {
-                    this.name = "Telechest";
-                }
-                else
-                {
-                    this.name = $"TeleChest - {dropIn.name}";
-                }
-                if (!TeleChestsMod.SharedInventory.ContainsKey(this.key))
-                {
-                    TeleChestsMod.SharedInventory.Add(this.key, new List<Item>());
-                }
-                this.currentLidFrame = 135;
-                this.frameCounter = 2;
-                Game1.playSound("throwDownITem");
-                items = TeleChestsMod.SharedInventory[this.key];
-            }
-            return false;
         }
     }
 }
