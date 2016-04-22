@@ -58,15 +58,15 @@ namespace TeleChests
         private static SerializableDictionary<int, TeleChest> invTeleChests = new SerializableDictionary<int, TeleChest>();
         private static SerializableDictionary<int, SerializableDictionary<Vector2, SerializableDictionary<int, TeleChest>>> chestTeleChests = new SerializableDictionary<int, SerializableDictionary<Vector2, SerializableDictionary<int, TeleChest>>>();
 
-        private static XmlSerializer invSerializer = new XmlSerializer(typeof(SerializableDictionary<int, List<Item>>), new Type[] { typeof(Item), typeof(TeleChest), typeof(int), typeof(List<Item>) });
-        private static XmlSerializer inWorldSerializer = new XmlSerializer(typeof(SerializableDictionary<int, SerializableDictionary<Vector2, TeleChest>>), new Type[] { typeof(int), typeof(Vector2), typeof(TeleChest) });
-        private static XmlSerializer invChestsSerializer = new XmlSerializer(typeof(SerializableDictionary<int, TeleChest>), new Type[] { typeof(int), typeof(TeleChest) });
-        private static XmlSerializer chestChestsSerializer = new XmlSerializer(typeof(SerializableDictionary<int, SerializableDictionary<Vector2, SerializableDictionary<int, TeleChest>>>), new Type[] { typeof(int), typeof(Vector2), typeof(TeleChest) });
+        private static XmlSerializer invSerializer = new XmlSerializer(typeof(SerializableDictionary<int, List<Item>>), new[] { typeof(Item), typeof(TeleChest), typeof(int), typeof(List<Item>) });
+        private static XmlSerializer inWorldSerializer = new XmlSerializer(typeof(SerializableDictionary<int, SerializableDictionary<Vector2, TeleChest>>), new[] { typeof(int), typeof(Vector2), typeof(TeleChest) });
+        private static XmlSerializer invChestsSerializer = new XmlSerializer(typeof(SerializableDictionary<int, TeleChest>), new[] { typeof(int), typeof(TeleChest) });
+        private static XmlSerializer chestChestsSerializer = new XmlSerializer(typeof(SerializableDictionary<int, SerializableDictionary<Vector2, SerializableDictionary<int, TeleChest>>>), new[] { typeof(int), typeof(Vector2), typeof(TeleChest) });
 
         public override void Entry(params object[] objects)
         {
             mod = this;
-            config = ConfigExtensions.InitializeConfig<TeleChestConfig>(new TeleChestConfig(), this.BaseConfigPath);
+            config = new TeleChestConfig().InitializeConfig(this.BaseConfigPath);
             SharedInventory = new SerializableDictionary<int, List<Item>>();
             if (config.useDefaultRecipe)
             {
@@ -82,10 +82,10 @@ namespace TeleChests
             {
                 try
                 {
-                    Dictionary<int, int> recipe = JsonConvert.DeserializeObject<Dictionary<int, int>>(File.ReadAllText(Path.Combine(TeleChestsMod.Mod.PathOnDisk, "customRecipe.json")));
-                    foreach (KeyValuePair<int, int> item in recipe)
+                    Dictionary<int, int> customRecipe = JsonConvert.DeserializeObject<Dictionary<int, int>>(File.ReadAllText(Path.Combine(this.PathOnDisk, "customRecipe.json")));
+                    foreach (KeyValuePair<int, int> item in customRecipe)
                     {
-                        recipe.Add(item.Key, item.Value);
+                        customRecipe.Add(item.Key, item.Value);
                     }
                 }
                 catch
@@ -367,7 +367,7 @@ namespace TeleChests
             List<int> itemsToReplace = new List<int>();
             foreach (Item item in Game1.player.items)
             {
-                if (item != null && item is StardewValley.Object && (item as StardewValley.Object).bigCraftable && item.parentSheetIndex == 130 && !(item is Chest))
+                if (item is StardewValley.Object && (item as StardewValley.Object).bigCraftable && item.parentSheetIndex == 130 && !(item is Chest))
                 {
                     itemsToReplace.Add(Game1.player.items.IndexOf(item));
                 }

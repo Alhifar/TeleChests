@@ -16,7 +16,7 @@ namespace TeleChests
             {
                 recipeList.Add(item.Key, item.Value);
             }
-            
+
             List<int> itemToProduce = (List<int>)typeof(CraftingRecipe).GetField("itemToProduce", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(this);
             itemToProduce.Clear();
             itemToProduce.Add(130);

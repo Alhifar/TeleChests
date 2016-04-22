@@ -14,7 +14,7 @@ namespace TeleChests
         public int key;
         private const int CHEST_INDEX = 1130;
 
-        public TeleChest() : base()
+        public TeleChest()
         {
             setInitialValues();
         }
@@ -52,7 +52,7 @@ namespace TeleChests
         public override bool placementAction(GameLocation location, int x, int y, Farmer who = null)
         {
             this.health = 10;
-            Vector2 vector = new Vector2((float)(x / Game1.tileSize), (float)(y / Game1.tileSize));
+            Vector2 vector = new Vector2((x / Game1.tileSize), (y / Game1.tileSize));
             if (location.objects.ContainsKey(vector) || Game1.currentLocation is MineShaft)
             {
                 Game1.showRedMessage("Unsuitable Location");
@@ -74,7 +74,7 @@ namespace TeleChests
                 }
                 this.clearNulls();
                 Game1.playSound("hammer");
-                this.location.debris.Add(new Debris(this, this.tileLocation * new Vector2(Game1.tileSize, Game1.tileSize), new Vector2((float)Game1.player.GetBoundingBox().Center.X, (float)Game1.player.GetBoundingBox().Center.Y)));
+                this.location.debris.Add(new Debris(this, this.tileLocation * new Vector2(Game1.tileSize, Game1.tileSize), new Vector2(Game1.player.GetBoundingBox().Center.X, Game1.player.GetBoundingBox().Center.Y)));
                 this.location.objects[this.tileLocation].performRemoveAction(this.tileLocation, Game1.player.currentLocation);
                 this.location.objects.Remove(this.tileLocation);
                 return false;
